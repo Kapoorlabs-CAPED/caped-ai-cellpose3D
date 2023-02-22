@@ -84,7 +84,6 @@ def main(hparams):
         callbacks=[checkpoint_callback],
         accelerator="gpu",
         max_epochs=hparams.epochs,
-        resume_from_checkpoint=resume_ckpt,
     )
 
     # ------------------------
