@@ -171,7 +171,7 @@ class UNet3D_cellpose(pl.LightningModule):
         return {"avg_val_loss": avg_loss, "log": tensorboard_logs}
 
     def configure_optimizers(self):
-        opt = optim.adam(
+        opt = optim.Adam(
             self.network.parameters(), lr=self.hparams["learning_rate"]
         )
         return [opt], []
