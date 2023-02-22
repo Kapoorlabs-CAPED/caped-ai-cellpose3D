@@ -74,7 +74,7 @@ def main(hparams):
 
     checkpoint_callback = ModelCheckpoint(
         dirpath=hparams.output_path,
-        every_n_train_steps=1,
+        save_top_k=1,
     )
 
     logger = CSVLogger(hparams.log_path)
