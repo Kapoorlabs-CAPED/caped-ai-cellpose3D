@@ -81,7 +81,7 @@ def main(hparams):
 
     trainer = Trainer(
         logger=logger,
-        checkpoint_callback=checkpoint_callback,
+        callbacks=[checkpoint_callback],
         accelerator="gpu",
         max_epochs=hparams.epochs,
         resume_from_checkpoint=resume_ckpt,
