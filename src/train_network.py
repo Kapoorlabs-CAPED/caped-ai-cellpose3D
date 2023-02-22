@@ -104,14 +104,14 @@ if __name__ == "__main__":
     parent_parser.add_argument(
         "--output_path",
         type=str,
-        default=r"D:\LfB\pytorchRepo\results\Cellpose3D_experiment",
+        default=r"/gpfsstore/rech/jsy/uzj81mi/Mari_Models/CellPose3D/",
         help="output path for test results",
     )
 
     parent_parser.add_argument(
         "--log_path",
         type=str,
-        default=r"D:\LfB\pytorchRepo\logs",
+        default=r"/gpfsstore/rech/jsy/uzj81mi/Mari_Models/CellPose3D/logs/",
         help="output path for test results",
     )
 
