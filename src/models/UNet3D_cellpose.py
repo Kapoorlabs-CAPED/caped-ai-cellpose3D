@@ -40,8 +40,8 @@ class UNet3D_cellpose(pl.LightningModule):
 
         if type(hparams) is dict:
             hparams = Namespace(**hparams)
-        self.hparams = {}
-        self.hparams.update(hparams)
+        for key in hparams.keys():
+            self.hparams[key] = hparams[key]
         self.augmentation_dict = {}
 
         # networks
