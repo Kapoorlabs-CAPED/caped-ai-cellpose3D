@@ -73,12 +73,8 @@ def main(hparams):
     # ------------------------
 
     checkpoint_callback = ModelCheckpoint(
-        filepath=hparams.output_path,
-        save_top_k=1,
-        monitor="epoch",
-        mode="max",
-        verbose=True,
-        period=5,
+        dirpath=hparams.output_path,
+        every_n_train_steps=1,
     )
 
     logger = CSVLogger(hparams.log_path)
@@ -86,12 +82,8 @@ def main(hparams):
     trainer = Trainer(
         logger=logger,
         checkpoint_callback=checkpoint_callback,
-        gpus=hparams.gpus,
-        distributed_backend=hparams.distributed_backend,
-        use_amp=False,
-        min_nb_epochs=hparams.epochs,
-        max_nb_epochs=hparams.epochs,
-        early_stop_callback=False,
+        accelerator="gpu",
+        max_epochs=hparams.epochs,
         resume_from_checkpoint=resume_ckpt,
     )
 
