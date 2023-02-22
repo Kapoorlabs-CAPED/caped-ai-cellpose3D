@@ -19,7 +19,7 @@
 """
 
 import json
-from argparse import ArgumentParser, Namespace
+from argparse import ArgumentParser
 from collections import OrderedDict
 
 import numpy as np
@@ -38,8 +38,6 @@ class UNet3D_cellpose(pl.LightningModule):
     def __init__(self, hparams):
         super().__init__()
 
-        if type(hparams) is dict:
-            hparams = Namespace(**hparams)
         for key in hparams.keys():
             self.hparams[key] = hparams[key]
         self.augmentation_dict = {}
