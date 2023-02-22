@@ -27,7 +27,7 @@ import pytorch_lightning as pl
 import torch
 import torch.nn.functional as F
 import torchvision
-from ThirdParty.radam import RAdam
+from torch import optim
 from torch.utils.data import DataLoader
 
 from dataloader.h5_dataloader import MeristemH5Dataset
@@ -169,7 +169,9 @@ class UNet3D_cellpose(pl.LightningModule):
         return {"avg_val_loss": avg_loss, "log": tensorboard_logs}
 
     def configure_optimizers(self):
-        opt = RAdam(self.network.parameters(), lr=self.hparams.learning_rate)
+        opt = optim.adam(
+            self.network.parameters(), lr=self.hparams.learning_rate
+        )
         return [opt], []
 
     def train_dataloader(self):
