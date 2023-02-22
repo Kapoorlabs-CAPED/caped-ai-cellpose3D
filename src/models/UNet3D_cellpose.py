@@ -47,12 +47,12 @@ class UNet3D_cellpose(pl.LightningModule):
 
         # networks
         self.network = UNet3D_module(
-            patch_size=hparams.patch_size,
-            in_channels=hparams.in_channels,
-            out_channels=hparams.out_channels,
-            feat_channels=hparams.feat_channels,
-            out_activation=hparams.out_activation,
-            norm_method=hparams.norm_method,
+            patch_size=hparams["patch_size"],
+            in_channels=hparams["in_channels"],
+            out_channels=hparams["out_channels"],
+            feat_channels=hparams["feat_channels"],
+            out_activation=hparams["out_activation"],
+            norm_method=hparams["norm_method"],
         )
 
         # cache for generated images
@@ -137,8 +137,8 @@ class UNet3D_cellpose(pl.LightningModule):
         loss_flow = (loss_flowx + loss_flowy + loss_flowz) / 3
 
         loss = (
-            self.hparams.background_weight * loss_bg
-            + self.hparams.flow_weight * loss_flow
+            self.hparams["background_weight"] * loss_bg
+            + self.hparams["flow_weight"] * loss_flow
         )
         tqdm_dict = {
             "bg_loss": loss_bg,
@@ -172,70 +172,70 @@ class UNet3D_cellpose(pl.LightningModule):
 
     def configure_optimizers(self):
         opt = optim.adam(
-            self.network.parameters(), lr=self.hparams.learning_rate
+            self.network.parameters(), lr=self.hparams["learning_rate"]
         )
         return [opt], []
 
     def train_dataloader(self):
-        if self.hparams.train_list is None:
+        if self.hparams["train_list"] is None:
             return None
         else:
             dataset = MeristemH5Dataset(
-                self.hparams.train_list,
-                self.hparams.data_root,
-                patch_size=self.hparams.patch_size,
-                image_groups=self.hparams.image_groups,
-                mask_groups=self.hparams.mask_groups,
+                self.hparams["train_list"],
+                self.hparams["data_root"],
+                patch_size=self.hparams["patch_size"],
+                image_groups=self.hparams["image_groups"],
+                mask_groups=self.hparams["mask_groups"],
                 augmentation_dict=self.augmentation_dict,
-                dist_handling=self.hparams.dist_handling,
-                norm_method=self.hparams.data_norm,
-                sample_per_epoch=self.hparams.samples_per_epoch,
+                dist_handling=self.hparams["dist_handling"],
+                norm_method=self.hparams["data_norm"],
+                sample_per_epoch=self.hparams["samples_per_epoch"],
             )
             return DataLoader(
                 dataset,
-                batch_size=self.hparams.batch_size,
+                batch_size=self.hparams["batch_size"],
                 shuffle=True,
                 drop_last=True,
             )
 
     def test_dataloader(self):
-        if self.hparams.test_list is None:
+        if self.hparams["test_list"] is None:
             return None
         else:
             dataset = MeristemH5Dataset(
-                self.hparams.test_list,
-                self.hparams.data_root,
-                patch_size=self.hparams.patch_size,
-                image_groups=self.hparams.image_groups,
-                mask_groups=self.hparams.mask_groups,
+                self.hparams["test_list"],
+                self.hparams["data_root"],
+                patch_size=self.hparams["patch_size"],
+                image_groups=self.hparams["image_groups"],
+                mask_groups=self.hparams["mask_groups"],
                 augmentation_dict={},
-                dist_handling=self.hparams.dist_handling,
-                norm_method=self.hparams.data_norm,
+                dist_handling=self.hparams["dist_handling"],
+                norm_method=self.hparams["data_norm"],
             )
-            return DataLoader(dataset, batch_size=self.hparams.batch_size)
+            return DataLoader(dataset, batch_size=self.hparams["batch_size"])
 
     def val_dataloader(self):
-        if self.hparams.val_list is None:
+        if self.hparams["val_list"] is None:
             return None
         else:
             dataset = MeristemH5Dataset(
-                self.hparams.val_list,
-                self.hparams.data_root,
-                patch_size=self.hparams.patch_size,
-                image_groups=self.hparams.image_groups,
-                mask_groups=self.hparams.mask_groups,
+                self.hparams["val_list"],
+                self.hparams["data_root"],
+                patch_size=self.hparams["patch_size"],
+                image_groups=self.hparams["image_groups"],
+                mask_groups=self.hparams["mask_groups"],
                 augmentation_dict={},
-                dist_handling=self.hparams.dist_handling,
-                norm_method=self.hparams.data_norm,
+                dist_handling=self.hparams["dist_handling"],
+                norm_method=self.hparams["data_norm"],
             )
-            return DataLoader(dataset, batch_size=self.hparams.batch_size)
+            return DataLoader(dataset, batch_size=self.hparams["batch_size"])
 
     def on_epoch_end(self):
         # log sampled images
         predictions = self.forward(self.last_imgs)
         prediction_grid = torchvision.utils.make_grid(
             predictions[
-                0, :, np.newaxis, int(self.hparams.patch_size[0] // 2), :, :
+                0, :, np.newaxis, int(self.hparams["patch_size"][0] // 2), :, :
             ]
         )
         self.logger.experiment.add_image(
@@ -244,7 +244,7 @@ class UNet3D_cellpose(pl.LightningModule):
 
         img_grid = torchvision.utils.make_grid(
             self.last_imgs[
-                0, :, np.newaxis, int(self.hparams.patch_size[0] // 2), :, :
+                0, :, np.newaxis, int(self.hparams["patch_size"][0] // 2), :, :
             ]
         )
         self.logger.experiment.add_image(
@@ -253,7 +253,7 @@ class UNet3D_cellpose(pl.LightningModule):
 
         mask_grid = torchvision.utils.make_grid(
             self.last_masks[
-                0, :, np.newaxis, int(self.hparams.patch_size[0] // 2), :, :
+                0, :, np.newaxis, int(self.hparams["patch_size"][0] // 2), :, :
             ]
         )
         self.logger.experiment.add_image(
