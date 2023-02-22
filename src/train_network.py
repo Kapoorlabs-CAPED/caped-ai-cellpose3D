@@ -38,7 +38,7 @@ def main(hparams):
     Main training routine specific for this project
     :param hparams:
     """
-
+    print(hparams)
     # ------------------------
     # 1 INIT LIGHTNING MODEL
     # ------------------------
