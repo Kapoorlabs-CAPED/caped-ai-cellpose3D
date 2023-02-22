@@ -41,7 +41,7 @@ class UNet3D_cellpose(pl.LightningModule):
         if type(hparams) is dict:
             hparams = Namespace(**hparams)
         hparams = vars(hparams)
-        self.hparams = {}
+
         self.hparams.update(hparams)
         self.augmentation_dict = {}
 
