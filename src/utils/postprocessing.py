@@ -94,7 +94,7 @@ def apply_cellpose(
         save_path = os.path.join(
             filedir, "instances" + fg_file[len(fg_identifier) :]
         )
-        dP = np.stack(flow_x, flow_y, flow_z, axis=0)
+        dP = np.stack((flow_x, flow_y, flow_z), axis=0)
         cellprob = fg_map
         instances, _ = dynamics.compute_masks(
             dP,
