@@ -36,7 +36,7 @@ from models.UNet3D import UNet3D_module
 
 class UNet3D_cellpose(pl.LightningModule):
     def __init__(self, hparams):
-        super().__init__(hparams=hparams)
+        super().__init__()
 
         if type(hparams) is dict:
             hparams = Namespace(**hparams)
