@@ -316,7 +316,7 @@ class UNet3D_cellpose(pl.LightningModule):
 
         # training params (opt)
         parser.add_argument("--samples_per_epoch", default=-1, type=int)
-        parser.add_argument("--batch_size", default=1, type=int)
+        parser.add_argument("--batch_size", default=32, type=int)
         parser.add_argument("--learning_rate", default=0.001, type=float)
         parser.add_argument("--background_weight", default=1, type=float)
         parser.add_argument("--flow_weight", default=1, type=float)
