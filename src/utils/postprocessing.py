@@ -23,7 +23,6 @@ import os
 
 import numpy as np
 import torch
-from cellpose_vollseg import dynamics
 from scipy.ndimage import filters, zoom
 from skimage import io
 from skimage.measure import regionprops
@@ -94,25 +93,27 @@ def apply_cellpose(
         save_path = os.path.join(
             filedir, "instances" + fg_file[len(fg_identifier) :]
         )
-        dP = np.stack((flow_x, flow_y, flow_z), axis=0)
-        cellprob = fg_map
-        instances, _ = dynamics.compute_masks(
-            dP,
-            cellprob,
-            niter=niter,
-            cellprob_threshold=0.0,
-            flow_threshold=flow_thresh,
-            do_3D=True,
-            min_size=min_diameter,
-        )
 
-        instances = label(instances)
-        instances = instances.astype(np.uint32)
-        instances = clear_border(instances)
-        if save_path is not None:
-            if verbose:
-                print_timestamp("Saving results...")
-            io.imsave(save_path, instances)
+        cellpose_flowcontrol(
+            fg_map,
+            flow_x,
+            flow_y,
+            flow_z,
+            save_path=save_path,
+            niter=niter,
+            njobs=njobs,
+            min_diameter=min_diameter,
+            max_diameter=max_diameter,
+            step_size=step_size,
+            smoothing_var=smoothing_var,
+            fg_thresh=fg_thresh,
+            fg_overlap_thresh=fg_overlap_thresh,
+            flow_thresh=flow_thresh,
+            convexity_thresh=convexity_thresh,
+            normalize_flows=normalize_flows,
+            invert_flows=invert_flows,
+            verbose=verbose,
+        )
 
 
 def cellpose_flowcontrol(

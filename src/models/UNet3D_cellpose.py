@@ -275,7 +275,7 @@ class UNet3D_cellpose(pl.LightningModule):
         parser.add_argument("--out_channels", default=4, type=int)
         parser.add_argument("--feat_channels", default=16, type=int)
         parser.add_argument(
-            "--patch_size", default=(16, 128, 128), type=int, nargs="+"
+            "--patch_size", default=(8, 256, 256), type=int, nargs="+"
         )
         parser.add_argument("--out_activation", default="tanh", type=str)
         parser.add_argument("--norm_method", default="instance", type=str)
