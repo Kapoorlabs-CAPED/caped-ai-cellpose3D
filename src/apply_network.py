@@ -308,7 +308,7 @@ if __name__ == "__main__":
     parent_parser.add_argument(
         "--overlap",
         type=int,
-        default=(4, 16, 16),
+        default=(2, 16, 16),
         help="overlap of adjacent patches",
         nargs="+",
     )
@@ -316,7 +316,7 @@ if __name__ == "__main__":
     parent_parser.add_argument(
         "--crop",
         type=int,
-        default=(4, 32, 32),
+        default=(2, 32, 32),
         help="safety crop of patches",
         nargs="+",
     )
