@@ -94,7 +94,7 @@ if __name__ == "__main__":
     )
 
     parent_parser.add_argument(
-        "--max_diam", type=int, default=50, help="Maximum cell diameter"
+        "--max_diam", type=int, default=100, help="Maximum cell diameter"
     )
 
     parent_parser.add_argument(
@@ -109,7 +109,7 @@ if __name__ == "__main__":
     )
 
     parent_parser.add_argument(
-        "--niter", type=int, default=200, help="Number of iterations"
+        "--niter", type=int, default=100, help="Number of iterations"
     )
 
     parent_parser.add_argument(
