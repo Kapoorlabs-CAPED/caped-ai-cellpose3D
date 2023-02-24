@@ -23,7 +23,7 @@ import os
 
 import numpy as np
 import torch
-from cellpose import dynamics
+from cellpose_vollseg import dynamics
 from scipy.ndimage import filters, zoom
 from skimage import io
 from skimage.measure import regionprops
