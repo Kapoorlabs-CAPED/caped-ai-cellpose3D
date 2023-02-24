@@ -18,6 +18,7 @@
 # as well as for installation instructions.
 """
 
+import concurrent
 import os
 
 import numpy as np
@@ -27,10 +28,11 @@ from skimage import io
 from skimage.measure import regionprops
 from skimage.morphology import ball, binary_closing, binary_dilation, label
 from skimage.segmentation import clear_border
+from tqdm import tqdm
+
 from utils.h5_converter import calculate_flows
 from utils.utils import print_timestamp
-from tqdm import tqdm
-import concurrent
+
 
 def apply_cellpose(
     filedir,
@@ -183,7 +185,6 @@ def cellpose_flowcontrol(
 
     # Iteratively move each pixel along the flow field
     for i in tqdm(range(niter)):
-        
         # Get updated position
         new_x = torch.clamp(
             pos_x - flow_x_torch[(pos_x.long(), pos_y.long(), pos_z.long())],
@@ -228,23 +229,32 @@ def cellpose_flowcontrol(
         print_timestamp("Removing oversized instance clusters and noise...")
     labels, counts = np.unique(instances, return_counts=True)
     futures = []
-    remove_labels = [] 
-    with concurrent.futures.ThreadPoolExecutor(max_workers = os.cpu_count()) as executor:
-             
-          for curr_l, c in zip(labels, counts):
-                  futures.append(executor.submit(_remove_label_computer, instances, c, min_diameter, max_diameter, fg_map, curr_l, fg_overlap_thresh))
+    remove_labels = []
+    with concurrent.futures.ThreadPoolExecutor(
+        max_workers=os.cpu_count()
+    ) as executor:
+        for curr_l, c in zip(labels, counts):
+            futures.append(
+                executor.submit(
+                    _remove_label_computer,
+                    instances,
+                    c,
+                    min_diameter,
+                    max_diameter,
+                    fg_map,
+                    curr_l,
+                    fg_overlap_thresh,
+                )
+            )
 
-          for r in concurrent.futures.as_completed(futures):
-                    
-                      to_remove = r.result()
-                      if to_remove is not None:
-                            remove_labels.append(to_remove)
- 
+        for r in concurrent.futures.as_completed(futures):
+            to_remove = r.result()
+            if to_remove is not None:
+                remove_labels.append(to_remove)
 
-    
     if len(remove_labels) > 0:
         instances[np.isin(instances, remove_labels)] = 0
-    
+
     # Remove bad flow masks
     if verbose:
         print_timestamp(
@@ -255,17 +265,32 @@ def cellpose_flowcontrol(
         np.abs(flow_x - recon_flow_x)
         + np.abs(flow_y - recon_flow_y)
         + np.abs(flow_z - recon_flow_z)
-    ) / 3 
-    remove_labels = []
+    ) / 3
     error_map = np.zeros_like(instances, dtype=np.float32)
-    for region in regionprops(instances):
-        error_map[instances == region.label] = np.mean(
-            flow_error[instances == region.label]
-        )
-        if np.mean(flow_error[instances == region.label]) > flow_thresh:
-            remove_labels.append(region.label)
-        # if region.minor_axis_length/region.major_axis_length < convexity_thresh:
-        # remove_labels.append(region.label)
+    futures = []
+    remove_labels = []
+    with concurrent.futures.ThreadPoolExecutor(
+        max_workers=os.cpu_count()
+    ) as executor:
+        for region in regionprops(instances):
+            futures.append(
+                executor.submit(
+                    _remove_bad_flows,
+                    error_map,
+                    instances,
+                    region,
+                    flow_error,
+                    flow_thresh,
+                )
+            )
+
+    for r in concurrent.futures.as_completed(futures):
+        to_remove = r.result()
+        if to_remove is not None:
+            remove_labels.append(to_remove)
+
+    # if region.minor_axis_length/region.major_axis_length < convexity_thresh:
+    # remove_labels.append(region.label)
     if len(remove_labels) > 0:
         instances[np.isin(instances, remove_labels)] = 0
 
@@ -285,14 +310,25 @@ def cellpose_flowcontrol(
 
     return instances
 
-def _remove_label_computer(instances, c, min_diameter, max_diameter, fg_map, curr_l, fg_overlap_thresh):
-          
-           if c < 4 / 3 * np.pi * (min_diameter / 2) ** 3 or c > 4 / 3 * np.pi * (max_diameter / 2) ** 3 or np.sum(fg_map[instances == curr_l]) / c < fg_overlap_thresh:
-                   
-                    return curr_l 
-              
 
-      
+def _remove_label_computer(
+    instances, c, min_diameter, max_diameter, fg_map, curr_l, fg_overlap_thresh
+):
+    if (
+        c < 4 / 3 * np.pi * (min_diameter / 2) ** 3
+        or c > 4 / 3 * np.pi * (max_diameter / 2) ** 3
+        or np.sum(fg_map[instances == curr_l]) / c < fg_overlap_thresh
+    ):
+        return curr_l
+
+
+def _remove_bad_flows(error_map, instances, region, flow_error, flow_thresh):
+    error_map[instances == region.label] = np.mean(
+        flow_error[instances == region.label]
+    )
+    if np.mean(flow_error[instances == region.label]) > flow_thresh:
+        return region.label
+
 
 def crop_images(
     filepaths,
