@@ -90,7 +90,7 @@ if __name__ == "__main__":
     )
 
     parent_parser.add_argument(
-        "--min_diam", type=int, default=1, help="Minimum cell diameter"
+        "--min_diam", type=int, default=2, help="Minimum cell diameter"
     )
 
     parent_parser.add_argument(
