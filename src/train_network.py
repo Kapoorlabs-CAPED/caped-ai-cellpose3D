@@ -150,7 +150,7 @@ if __name__ == "__main__":
     )
 
     parent_parser.add_argument(
-        "--epochs", type=int, default=1000, help="number of epochs"
+        "--epochs", type=int, default=200, help="number of epochs"
     )
 
     parent_parser.add_argument(
