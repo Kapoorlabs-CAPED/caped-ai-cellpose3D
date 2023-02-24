@@ -128,7 +128,7 @@ if __name__ == "__main__":
     )
 
     parent_parser.add_argument(
-        "--flow_thresh", type=float, default=1, help="Flow field threshold"
+        "--flow_thresh", type=float, default=0.8, help="Flow field threshold"
     )
 
     parent_parser.add_argument(
