@@ -62,7 +62,7 @@ def main(hparams):
     # 1 INIT LIGHTNING MODEL
     # ------------------------
     model = network(hparams=hparams)
-    model = model.load_from_checkpoint(hparams.ckpt_path)
+    model = model.load_from_checkpoint(hparams.ckpt_path, hparams=hparams)
     model = model.cuda()
 
     input_tif_directory = hparams.input_path
