@@ -26,6 +26,7 @@ import numpy as np
 import torch
 from skimage import io
 from torch.autograd import Variable
+from tqdm import tqdm
 
 from dataloader.h5_dataloader import MeristemH5Tiler as Tiler
 from utils.csv_generator import create_apply_csv
@@ -151,12 +152,7 @@ def main(hparams):
                 (hparams.out_channels,) + working_size, 0, dtype=np.float32
             )
 
-            for patch_idx in range(tiler.__len__()):
-                print_timestamp(
-                    "Processing patch {0}/{1}...",
-                    (patch_idx + 1, tiler.__len__()),
-                )
-
+            for patch_idx in tqdm(range(tiler.__len__())):
                 # Get the mask
                 sample = tiler.__getitem__(patch_idx)
                 data = Variable(
@@ -171,8 +167,6 @@ def main(hparams):
 
                 pred_patch = pred_patch.cpu().data.numpy()
                 pred_patch = np.squeeze(pred_patch)
-
-                print("Pred patch", pred_patch.shape)
 
                 # Get the current slice position
                 slicing = tuple(
@@ -194,7 +188,6 @@ def main(hparams):
             # Normalize the predicted image
             norm_map = np.clip(norm_map, 1e-5, np.inf)
             predicted_img = predicted_img / norm_map
-            print("Pred image", predicted_img.shape)
             # Crop the predicted image to its original size
             slicing = tuple(
                 map(
@@ -203,7 +196,6 @@ def main(hparams):
                     (hparams.out_channels,) + tuple(tiler.global_crop_after),
                 )
             )
-            print(slicing)
             predicted_img = predicted_img[slicing]
 
             # Save the predicted image
