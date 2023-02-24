@@ -284,7 +284,7 @@ if __name__ == "__main__":
     parent_parser.add_argument(
         "--input_path",
         type=str,
-        default=r"/gpfsstore/rech/jsy/uzj81mi/Mari_Data_Oneat/raw/third_dataset/for_cellpose_prediction/Test_Some_Membrane/",
+        default=r"/gpfsstore/rech/jsy/uzj81mi/Mari_Data_Oneat/raw/third_dataset/for_cellpose_prediction/Test_Some/Test_Some_Membrane/",
         help="input image directory",
     )
 
