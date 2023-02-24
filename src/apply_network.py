@@ -28,6 +28,7 @@ from skimage import io
 from torch.autograd import Variable
 
 from dataloader.h5_dataloader import MeristemH5Tiler as Tiler
+from utils.csv_generator import create_apply_csv
 from utils.h5_converter import prepare_images
 from utils.utils import print_timestamp
 
@@ -72,11 +73,12 @@ def main(hparams):
     for fname in os.listdir(input_tif_directory):
         if any(fname.endswith(f) for f in acceptable_formats):
             data_list.append([os.path.join(input_tif_directory, fname), None])
+    create_apply_csv(data_list, input_tif_directory, "_current.csv")
     # ------------------------
     # 2 INIT DATA TILER
     # ------------------------
     tiler = Tiler(
-        data_list,
+        os.path.join(input_tif_directory, "_current.csv"),
         no_mask=hparams.input_batch == "image",
         no_img=hparams.input_batch == "mask",
         **vars(hparams),
