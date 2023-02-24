@@ -18,6 +18,7 @@
 # as well as for installation instructions.
 """
 
+import os
 from argparse import ArgumentParser
 
 from utils.postprocessing import apply_cellpose
@@ -112,7 +113,7 @@ if __name__ == "__main__":
     )
 
     parent_parser.add_argument(
-        "--njobs", type=int, default=4, help="Number of jobs"
+        "--njobs", type=int, default=os.cpu_count(), help="Number of jobs"
     )
 
     parent_parser.add_argument(
@@ -127,7 +128,7 @@ if __name__ == "__main__":
     )
 
     parent_parser.add_argument(
-        "--flow_thresh", type=float, default=1, help="Flow field threshold"
+        "--flow_thresh", type=float, default=5, help="Flow field threshold"
     )
 
     parent_parser.add_argument(
