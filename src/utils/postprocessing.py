@@ -236,7 +236,7 @@ def cellpose_flowcontrol(
 
           for r in concurrent.futures.as_completed(futures):
                     
-                      to_remove = r.get()
+                      to_remove = r.result()
                       if to_remove is not None:
                             remove_labels.append(to_remove)
  
