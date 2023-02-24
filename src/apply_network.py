@@ -168,6 +168,7 @@ def main(hparams):
 
                 # Predict the image
                 pred_patch = model(data)
+                print("Predicting on data", data.shape, pred_patch.shape)
                 pred_patch = pred_patch.cpu().data.numpy()
                 pred_patch = np.squeeze(pred_patch)
                 pred_patch = np.clip(
@@ -203,6 +204,7 @@ def main(hparams):
                     (hparams.out_channels,) + tuple(tiler.global_crop_after),
                 )
             )
+
             predicted_img = predicted_img[slicing]
 
             # Save the predicted image
