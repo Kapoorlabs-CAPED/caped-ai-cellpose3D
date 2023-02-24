@@ -180,6 +180,7 @@ def calculate_flows(instance_mask, bg_label=0):
         for r in concurrent.futures.as_completed(futures):
             flows = r.result()
             flow_x, flow_y, flow_z = flows
+    return flow_x, flow_y, flow_z
 
 
 def _compute_flow(props, instance_mask, flow_x, flow_y, flow_z):
