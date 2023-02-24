@@ -168,12 +168,11 @@ def main(hparams):
 
                 # Predict the image
                 pred_patch = model(data)
-                print("Predicting on data", data.shape, pred_patch.shape)
+
                 pred_patch = pred_patch.cpu().data.numpy()
                 pred_patch = np.squeeze(pred_patch)
-                pred_patch = np.clip(
-                    pred_patch, hparams.clip[0], hparams.clip[1]
-                )
+
+                print("Pred patch", pred_patch.shape)
 
                 # Get the current slice position
                 slicing = tuple(
@@ -195,7 +194,7 @@ def main(hparams):
             # Normalize the predicted image
             norm_map = np.clip(norm_map, 1e-5, np.inf)
             predicted_img = predicted_img / norm_map
-
+            print("Pred image", predicted_img.shape)
             # Crop the predicted image to its original size
             slicing = tuple(
                 map(
@@ -204,12 +203,13 @@ def main(hparams):
                     (hparams.out_channels,) + tuple(tiler.global_crop_after),
                 )
             )
-
+            print(slicing)
             predicted_img = predicted_img[slicing]
 
             # Save the predicted image
             predicted_img = np.transpose(predicted_img, (1, 2, 3, 0))
             predicted_img = predicted_img.astype(np.float32)
+            print("final_size", predicted_img.shape)
             if hparams.out_channels > 3:
                 for channel in range(hparams.out_channels):
                     io.imsave(
@@ -341,14 +341,6 @@ if __name__ == "__main__":
         type=str,
         default="Cellpose3D",
         help="Which model to load (Cellpose3D)",
-    )
-
-    parent_parser.add_argument(
-        "--clip",
-        type=float,
-        default=(-1.0, 1.0),
-        help="clipping values for network outputs",
-        nargs="+",
     )
 
     parent_parser.add_argument(
