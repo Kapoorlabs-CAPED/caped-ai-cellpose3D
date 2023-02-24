@@ -261,6 +261,7 @@ def cellpose_flowcontrol(
             "Removing instances with bad flow and bad convexity..."
         )
     recon_flow_x, recon_flow_y, recon_flow_z = calculate_flows(instances)
+    print("computed recon flows")
     flow_error = (
         np.abs(flow_x - recon_flow_x)
         + np.abs(flow_y - recon_flow_y)

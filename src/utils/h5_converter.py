@@ -18,7 +18,6 @@
 # as well as for installation instructions.
 """
 
-import concurrent
 import glob
 import os
 
@@ -158,38 +157,16 @@ def calculate_flows(instance_mask, bg_label=0):
     flow_y = np.zeros(instance_mask.shape, dtype=np.float32)
     flow_z = np.zeros(instance_mask.shape, dtype=np.float32)
     regions = measure.regionprops(instance_mask)
+    for props in regions:
+        if props.label == bg_label:
+            continue
 
-    futures = []
+        c = props.centroid
+        coords = np.where(instance_mask == props.label)
 
-    with concurrent.futures.ThreadPoolExecutor(
-        max_workers=os.cpu_count()
-    ) as executor:
-        for props in regions:
-            if props.label != bg_label:
-                futures.append(
-                    executor.submit(
-                        _compute_flow,
-                        props,
-                        instance_mask,
-                        flow_x,
-                        flow_y,
-                        flow_z,
-                    )
-                )
-
-        for r in concurrent.futures.as_completed(futures):
-            flows = r.result()
-            flow_x, flow_y, flow_z = flows
-    return flow_x, flow_y, flow_z
-
-
-def _compute_flow(props, instance_mask, flow_x, flow_y, flow_z):
-    c = props.centroid
-    coords = np.where(instance_mask == props.label)
-
-    flow_x[coords] = np.tanh((coords[0] - c[0]) / 5)
-    flow_y[coords] = np.tanh((coords[1] - c[1]) / 5)
-    flow_z[coords] = np.tanh((coords[2] - c[2]) / 5)
+        flow_x[coords] = np.tanh((coords[0] - c[0]) / 5)
+        flow_y[coords] = np.tanh((coords[1] - c[1]) / 5)
+        flow_z[coords] = np.tanh((coords[2] - c[2]) / 5)
 
     return flow_x, flow_y, flow_z
 
