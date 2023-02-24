@@ -232,7 +232,7 @@ def cellpose_flowcontrol(
     with concurrent.futures.ThreadPoolExecutor(max_workers = os.cpu_count()) as executor:
              
           for curr_l, c in zip(labels, counts):
-                  futures.append(executor.submit(_remove_label_computer, c, min_diameter, max_diameter, fg_map, curr_l, fg_overlap_thresh))
+                  futures.append(executor.submit(_remove_label_computer, instances, c, min_diameter, max_diameter, fg_map, curr_l, fg_overlap_thresh))
 
           for r in concurrent.futures.as_completed(futures):
                     
@@ -285,7 +285,7 @@ def cellpose_flowcontrol(
 
     return instances
 
-def _remove_label_computer(c, min_diameter, max_diameter, fg_map, curr_l, fg_overlap_thresh):
+def _remove_label_computer(instances, c, min_diameter, max_diameter, fg_map, curr_l, fg_overlap_thresh):
           
            if c < 4 / 3 * np.pi * (min_diameter / 2) ** 3 or c > 4 / 3 * np.pi * (max_diameter / 2) ** 3 or np.sum(fg_map[instances == curr_l]) / c < fg_overlap_thresh:
                    
