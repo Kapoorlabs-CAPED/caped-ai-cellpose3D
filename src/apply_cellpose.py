@@ -94,7 +94,7 @@ if __name__ == "__main__":
     )
 
     parent_parser.add_argument(
-        "--max_diam", type=int, default=100, help="Maximum cell diameter"
+        "--max_diam", type=int, default=1000, help="Maximum cell diameter"
     )
 
     parent_parser.add_argument(
@@ -134,7 +134,7 @@ if __name__ == "__main__":
     parent_parser.add_argument(
         "--convexity_thresh",
         type=float,
-        default=0.1,
+        default=0.5,
         help="Cell convexity threshold",
     )
 
