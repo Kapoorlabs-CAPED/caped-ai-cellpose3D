@@ -90,7 +90,7 @@ if __name__ == "__main__":
     )
 
     parent_parser.add_argument(
-        "--min_diam", type=int, default=2, help="Minimum cell diameter"
+        "--min_diam", type=int, default=10, help="Minimum cell diameter"
     )
 
     parent_parser.add_argument(
@@ -109,7 +109,7 @@ if __name__ == "__main__":
     )
 
     parent_parser.add_argument(
-        "--niter", type=int, default=100, help="Number of iterations"
+        "--niter", type=int, default=200, help="Number of iterations"
     )
 
     parent_parser.add_argument(
@@ -128,7 +128,7 @@ if __name__ == "__main__":
     )
 
     parent_parser.add_argument(
-        "--flow_thresh", type=float, default=0.8, help="Flow field threshold"
+        "--flow_thresh", type=float, default=2, help="Flow field threshold"
     )
 
     parent_parser.add_argument(

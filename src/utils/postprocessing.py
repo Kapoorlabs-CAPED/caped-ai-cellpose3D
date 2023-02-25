@@ -291,8 +291,8 @@ def cellpose_flowcontrol(
         if to_remove is not None:
             remove_labels.append(to_remove)
 
-    # if region.minor_axis_length/region.major_axis_length < convexity_thresh:
-    # remove_labels.append(region.label)
+    if region.minor_axis_length / region.major_axis_length < convexity_thresh:
+        remove_labels.append(region.label)
     if len(remove_labels) > 0:
         instances[np.isin(instances, remove_labels)] = 0
 
